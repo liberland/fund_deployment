@@ -1,0 +1,44 @@
+---
+- hosts: fund.liberland.org
+  sudo: yes
+  tasks:
+    - name: ensure passenger repository is in apt sources
+      lineinfile: dest=/etc/apt/sources.list.d/passenger.list line="deb https://oss-binaries.phusionpassenger.com/apt/passenger wheezy main" mode=600 owner=root create=true
+
+    - name: ensure passenger key is present
+      apt_key: keyserver=keyserver.ubuntu.com id=561F9B9CAC40B2F7
+
+    - name: ensure nginx-extras is at the latest version
+      apt: pkg=nginx-extras state=latest
+      notify:
+      - restart nginx
+
+    - name: ensure passenger is at the latest version
+      apt: pkg=passenger state=latest
+      notify:
+      - restart nginx
+
+    - name: ensure passenger_root is defined in nginx configuration
+      lineinfile: dest=/etc/nginx/nginx.conf line="passenger_root /usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini;" insertafter="# passenger_root"
+      notify:
+      - restart nginx
+
+    - name: ensure passenger_ruby is defined in nginx configuration
+      lineinfile: dest=/etc/nginx/nginx.conf line="passenger_ruby /usr/bin/passenger_free_ruby;" insertafter="# passenger_ruby"
+      notify:
+      - restart nginx
+
+    - name: ensure nginx virtual host configuration is present
+      copy: src=files/fund.nginx.conf dest=/etc/nginx/sites-enabled/fund owner=root group=root mode=0644
+      notify:
+      - restart nginx
+
+    - name: ensure deployer user is present
+      user: name=deployer comment="Capistrano Deployer" shell=/bin/bash
+
+    - name: ensure deployer authorized_key is present
+      authorized_key: user=deployer key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDP37RMFj1ZofwBLLwJRQjV9X9CtzIRE19kIJVrGN6z8XzPx8ltTzz185/dY2b7cx9I6HOhXZA5YPAEa31dcAdpITjsx5LYvmK7Xddl5KS1FnP5FEz7/NRpQDgPGD4+2f+gORhWcFGN3J/ETr129IZ0lg+O0t6TONntS7CsFU4v1lzbk8VqcEueEWivVN2J6OMBbb0dX4JsCC/JdhnI46GpdAc9m+M7lql6sEwVPZFJhCUCfrw4LSk1loRQm3VS1JhOqJT7xCBq0/DgVHyitPkiCyrkhQlSyuDO6pk7vsE08sIIf8QQKRwHmM1dL/PB8TXTDx63uyk4rP4ULURzD3sb"
+
+  handlers:
+    - name: restart nginx
+      service: name=nginx state=restarted
