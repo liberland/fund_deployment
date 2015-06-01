@@ -1,12 +1,12 @@
 ---
-- hosts: fund.liberland.org
+- hosts: all
   sudo: yes
   tasks:
-    - name: ensure passenger repository is in apt sources
-      lineinfile: dest=/etc/apt/sources.list.d/passenger.list line="deb https://oss-binaries.phusionpassenger.com/apt/passenger wheezy main" mode=600 owner=root create=true
-
     - name: ensure passenger key is present
       apt_key: keyserver=keyserver.ubuntu.com id=561F9B9CAC40B2F7
+
+    - name: ensure passenger repository is in apt sources
+      apt_repository: repo='deb https://oss-binaries.phusionpassenger.com/apt/passenger wheezy main' state=present
 
     - name: ensure nginx-extras is at the latest version
       apt: pkg=nginx-extras state=latest
