@@ -2,6 +2,15 @@
 - hosts: all
   sudo: yes
   tasks:
+    - name: ensure apt cache is up to date
+      apt: update_cache=yes
+
+    - name: ensure ca certificates are installed
+      apt: pkg=ca-certificates state=present
+
+    - name: ensure apt supports https
+      apt: pkg=apt-transport-https state=present
+
     - name: ensure passenger key is present
       apt_key: keyserver=keyserver.ubuntu.com id=561F9B9CAC40B2F7
 
