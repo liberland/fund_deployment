@@ -1,12 +1,12 @@
-= fund.liberland.org deployment
+# fund.liberland.org deployment
 
-== Development
+## Development
 
 Start your own local instance
 
     vargrant up
 
-== Production
+## Production
 
 Run ansible playbook against production server
 
