@@ -7,6 +7,7 @@
 # server 'example.com', user: 'deploy', roles: %w{app web}, other_property: :other_value
 # server 'db.example.com', user: 'deploy', roles: %w{db}
 
+server 'fund.liberland.org', user: 'deployer', roles: %w{app db web}
 
 
 # role-based syntax
@@ -47,6 +48,12 @@
 #    auth_methods: %w(password)
 #  }
 #
+
+set :ssh_options, {
+  keys: [File.join(ENV["HOME"], ".ssh", "liberland_rsa")],
+  forward_agent: false,
+}
+
 # The server-based syntax can be used to override options:
 # ------------------------------------
 # server 'example.com',
