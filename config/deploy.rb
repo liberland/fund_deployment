@@ -36,11 +36,17 @@ set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', '
 # Default value for keep_releases is 5
 set :keep_releases, 5
 
+after 'deploy:finished', 'deploy:restart'
+
 namespace :deploy do
 
   desc "Restarting mod_rails with restart.txt"
   task :restart do
-    run "touch #{current_path}/tmp/restart.txt"
+    on roles(:web), in: :groups, limit: 3, wait: 10 do
+      within release_path do
+        execute "touch #{current_path}/tmp/restart.txt"
+      end
+    end
   end
 
   after :restart, :clear_cache do
