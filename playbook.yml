@@ -27,6 +27,12 @@
       notify:
       - reload nginx
 
+    - name: ensure nginx is enabled
+      service: name=nginx enabled=yes
+
+    - name: ensure postgresql is started
+      service: name=postgresql enabled=yes state=started
+
     - name: ensure passenger_root is defined in nginx configuration
       lineinfile: dest=/etc/nginx/nginx.conf line="passenger_root /usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini;" insertafter="# passenger_root"
       notify:
