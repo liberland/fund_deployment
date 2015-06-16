@@ -15,7 +15,7 @@
       apt_key: keyserver=keyserver.ubuntu.com id=561F9B9CAC40B2F7
 
     - name: ensure passenger repository is in apt sources
-      apt_repository: repo='deb https://oss-binaries.phusionpassenger.com/apt/passenger wheezy main' state=present
+      apt_repository: repo='deb https://oss-binaries.phusionpassenger.com/apt/passenger jessie main' state=present
 
     - name: ensure nginx-extras is at the latest version
       apt: pkg=nginx-extras state=latest
